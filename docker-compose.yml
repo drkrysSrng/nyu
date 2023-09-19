@@ -1,0 +1,33 @@
+version: '2.1'
+services:
+  nyu-vpn1:
+    image: nyu:1.0
+    container_name: nyu-vpn1
+    privileged: true
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: always
+    ports:
+      - 127.0.0.1:9051:9050
+      - 127.0.0.1:8118:8118
+    volumes:
+      - /lib/modules:/lib/modules
+      - ./wgconfs:/config
+    networks:
+      - lucy
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - CONF_FILE=/etc/3proxy.cfg
+      - WG_FILE=/config/wg1.conf
+      - OUT_IP=PUBLIC_IP
+      - "NETWORK=cm91dGUgYWRkIC1uZXQgMTcyLjI2LjAuMC8xNSBndyAxNzIuMjkuMzAuMSBkZXYgZXRoMA=="
+
+networks:
+  lucy:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.29.30.0/24
+          gateway: 172.29.30.1
